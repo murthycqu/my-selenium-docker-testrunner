@@ -2,25 +2,22 @@ pipeline {
     // master executor should be set to 0
     agent any
     stages {
-        stage('Build Jar') {
+		stage('Grid UP') {
             steps {
                 //sh
-                bat "mvn clean package -DskipTests"
+                bat "docker-compose up -d hub chrome firefox"
             }
         }
-        stage('Build Image') {
+        stage('Run Test') {
             steps {
                 //sh
-                bat "docker build -t=murthyb/selenium-docker ."
+                bat "docker-compose up search-module book-flight-module"
             }
         }
-        stage('Push Image') {
+        stage('Grid DOWN') {
             steps {
-			    withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'pass', usernameVariable: 'user')]) {
-                    //sh
-			        bat "docker login --username=${user} --password=${pass}"
-			        bat "docker push murthyb/selenium-docker:latest"
-			    }
+                //sh
+                bat "docker-compose down"
             }
         }
     }
