@@ -14,11 +14,11 @@ pipeline {
                 bat "docker-compose up search-module book-flight-module"
             }
         }
-        stage('Grid DOWN') {
-            steps {
-                //sh
-                bat "docker-compose down"
-            }
-        }
     }
+	post {
+		always{
+			archiveArtifacts artifacts: '//target/**'
+			bat "docker-compose down"
+		}
+	}
 }
